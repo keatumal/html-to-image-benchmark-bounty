@@ -1,0 +1,93 @@
+* Testing Image Rendering Speed from HTML+CSS
+
+This is [[https://warpcast.com/anakvad][my]] solution to [[https://warpcast.com/~/conversations/0x3a500d72b2a765356e0f23bf8860cab602717a63][this bounty]]. 
+
+I have reviewed all the [[https://warpcast.com/samuellhuber.eth/0x02785402][comments and proposed solutions]] as of now (December 1, 2024). Most suggest Puppeteer, with other interesting solutions also present. I tested everything I considered worthwhile and feasible to test.
+
+I ran the code on my rather mediocre laptop:
+
+- CPU: Intel(R) Core(TM) i3-7100U CPU @ 2.40GHz, 4 cores
+- GPU: Intel Kabylake (Gen9)
+- OS: Arch Linux
+
+** Puppeteer
+
+I decided to test three different options. Each of them worked by a simple algorithm:
+
+1. Load the HTML into memory
+2. Render it 100 times
+3. Calculate the average time and save the screenshot from the first attempt
+
+All browsers were run in headless mode with no additional configurations.
+
+*** Chrome
+
+This is the default browser. The average time per iteration: 713 ms.
+
+*** Chrome via WebSocket
+
+The point of this approach is that the browser is launched once, and Puppeteer connects to it via WebSocket. I used a Docker container as described in [[https://www.browserless.io/blog/improving-puppeteer-performance][this article]].
+
+The result was better but not by much: 639 ms.
+
+*** Firefox
+
+It showed essentially the same speed: 708 ms.
+
+** wkhtmltoimage
+
+Project website: https://wkhtmltopdf.org
+
+I used a simple JS code that runs the command line utility. Only the first screenshot is saved; the others are deleted during each iteration.
+
+Average time: 353 ms.
+
+** ScreenshotOne
+
+Project website: https://screenshotone.com.
+
+This is an off-the-shelf API that supports screenshot generation from an HTML file. I requested a PNG format through a POST request, with all other options set to default. Two variants were tested for 20 iterations each:
+
+1. With downloading the resulting image. Average time: 2942 ms.
+2. Without downloading the image, only receiving a status response. Average time: 2679 ms.
+
+My internet speed at the time of testing: download - 21 Mbps, upload - 35 Mbps.
+
+** Other Solutions
+
+*** Cloudflare Browser Rendering Worker
+
+I do not have a paid subscription to test this. However, from the information I found, it is quite expensive — around $0.4 per screenshot.
+
+Documentation: https://developers.cloudflare.com/browser-rendering/get-started/screenshots/
+
+*** Satori
+
+Project GitHub: https://github.com/vercel/satori
+
+As far as I understood, it does not directly support HTML file rendering, and instead uses its own template syntax. Also, it supports a limited subset of HTML and CSS features. Therefore, I chose not to test this approach.
+
+*** html2canvas
+
+Website: https://html2canvas.hertzen.com/
+
+From what I understood, you need to have the page already rendered in a browser, and then this library can be used to get a screenshot by a selector. Therefore, this option doesn't seem suitable.
+
+*** Blitz
+
+Project GitHub: https://github.com/DioxusLabs/blitz
+
+This looks like a great project, but unfortunately, I couldn't get it running successfully. Additionally, the developers mention that it is in pre-alpha status and has known bugs.
+
+** Summary
+
+ | Method                      | Avg Speed (ms) |
+ |-----------------------------+----------------|
+ | wkhtmltoimage               |            353 |
+ | Puppeteer Chrome WebSocket  |            639 |
+ | Puppeteer Firefox           |            708 |
+ | Puppeteer Chrome            |            713 |
+ | ScreenshotOne (status)      |           2679 |
+ | ScreenshotOne (downloading) |           2942 |
+
+[[https://docs.google.com/spreadsheets/d/1LD2jTp2QwpD6P2TIcD8CJtCjyzHBQW0sDEjowOFzokk/edit?usp=sharing][Google Sheet]]

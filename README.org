@@ -53,6 +53,18 @@ This is an off-the-shelf API that supports screenshot generation from an HTML fi
 
 My internet speed at the time of testing: download - 21 Mbps, upload - 35 Mbps.
 
+** Satori
+
+Project GitHub: https://github.com/vercel/satori
+
+I used the same algorithm as with Puppeteer. I got the result in SVG format, other formats will require additional subsequent conversion, which in itself will be resource-intensive. I requested an output file resolution of 800x1200, which is roughly in line with other solutions.
+
+Average rendering time: 134 ms.
+
+But, not everything is so great. The thing is that I had to make a couple of changes to the original HTML file just to meet Satori's constraints. As a result, the layout of the elements moved a lot. But the annoying thing is that I only got a small part of the whole page. I haven't figured out what this is due to yet, but I think it's due to the limited HTML & CSS support.
+
+So far my conclusion is that this method is the fastest, but requires careful work on the HTML source file.
+
 ** Other Solutions
 
 *** Cloudflare Browser Rendering Worker
@@ -60,12 +72,6 @@ My internet speed at the time of testing: download - 21 Mbps, upload - 35 Mbps.
 I do not have a paid subscription to test this. However, from the information I found, it is quite expensive — around $0.4 per screenshot.
 
 Documentation: https://developers.cloudflare.com/browser-rendering/get-started/screenshots/
-
-*** Satori
-
-Project GitHub: https://github.com/vercel/satori
-
-As far as I understood, it does not directly support HTML file rendering, and instead uses its own template syntax. Also, it supports a limited subset of HTML and CSS features. Therefore, I chose not to test this approach.
 
 *** html2canvas
 
@@ -83,6 +89,7 @@ This looks like a great project, but unfortunately, I couldn't get it running su
 
  | Method                      | Avg Speed (ms) |
  |-----------------------------+----------------|
+ | Satori*                     |            134 |
  | wkhtmltoimage               |            353 |
  | Puppeteer Chrome WebSocket  |            639 |
  | Puppeteer Firefox           |            708 |

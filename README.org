@@ -65,6 +65,16 @@ But, not everything is so great. The thing is that I had to make a couple of cha
 
 So far my conclusion is that this method is the fastest, but requires careful work on the HTML source file.
 
+** Blitz
+
+Project GitHub: https://github.com/DioxusLabs/blitz
+
+I compiled the current repository along with the =screenshot= utility. If the final solution allows embedding HTML directly into the code and then fetching the image, then it would be possible to do what I need to do, including benchmarking, using the =screenshot.rs= code as an example. But I don't know Rust at all, and measuring a full run of the utility would add distortion to the measurements.
+
+Fortunately, the utility outputs render times. So I just ran it from the console a few times and wrote the values =Rendered to buffer in...=. As a result, the average rendering time on my hardware was 370ms, which is almost the same as =wkhtmltoimage=.
+
+But, it should be noted that like Satori, only a limited part of HTML & CSS is supported. As a result, my sample page came out garbled. I have attached a screenshot to this repository.
+
 ** Other Solutions
 
 *** Cloudflare Browser Rendering Worker
@@ -79,22 +89,19 @@ Website: https://html2canvas.hertzen.com/
 
 From what I understood, you need to have the page already rendered in a browser, and then this library can be used to get a screenshot by a selector. Therefore, this option doesn't seem suitable.
 
-*** Blitz
-
-Project GitHub: https://github.com/DioxusLabs/blitz
-
-This looks like a great project, but unfortunately, I couldn't get it running successfully. Additionally, the developers mention that it is in pre-alpha status and has known bugs.
-
 ** Summary
 
  | Method                      | Avg Speed (ms) |
  |-----------------------------+----------------|
  | Satori*                     |            134 |
  | wkhtmltoimage               |            353 |
+ | Blitz*                      |            370 |
  | Puppeteer Chrome WebSocket  |            639 |
  | Puppeteer Firefox           |            708 |
  | Puppeteer Chrome            |            713 |
  | ScreenshotOne (status)      |           2679 |
  | ScreenshotOne (downloading) |           2942 |
+
+ *** - Limited HTML & CSS support
 
 [[https://docs.google.com/spreadsheets/d/1LD2jTp2QwpD6P2TIcD8CJtCjyzHBQW0sDEjowOFzokk/edit?usp=sharing][Google Sheet]]
